@@ -1,0 +1,35 @@
+version: '3.4'
+
+services:
+  poemting:
+    build: .
+    command: npm run start:dev
+    restart: always
+    environment:
+      - FORCE_COLOR=3
+    volumes:
+      - ./src:/app/src
+      - ./files:/app/files
+    ports:
+      - 3002:3000
+    depends_on:
+      - poem-db
+    env_file:
+      - .env
+
+  poem-db:
+    image: postgres:14.2-alpine3.15
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./db-volume/postdb-data:/var/lib/postgresql/data
+
+volumes:
+  db-volume:
+    driver: local
+
+networks:
+  default:
+    external:
+      name: local-docker-network
